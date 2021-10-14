@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { VscDebugStart } from 'react-icons/vsc';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { VscDebugStart, VscDebugStop } from 'react-icons/vsc';
 
 import './timer.scss';
 
@@ -13,27 +13,52 @@ function getMinutes(sec) {
   return Math.floor(sec/60)
 }
 
-export default function Timer() {
-  const [seconds, setSeconds] = useState(25 * 60)
-  let reference;
-  function handleStartTimer() {
-    reference = setInterval(() => {
-      setSeconds(prev => prev - 1);
+function useStopwatch(min) {
+  const [seconds, setSeconds] = useState(60 * min);
+  const [pending, setPending] = useState(false);
+  let reference = useRef(null);
+
+  const stop = useCallback(function () {
+    console.log('stopping')
+    clearInterval(reference.current)
+    setPending(false);
+  }, [])
+
+  const start = useCallback( function () {
+    console.log('starting')
+    setPending(true);
+    reference.current = setInterval(() => {
+      if(seconds > 0) {
+        setSeconds(prev => prev - 1);
+      } else {
+        stop();
+      }
     }, 1000)
-  }
-  useEffect(() => {
-    return clearInterval(reference);
-  }, [reference])
+  }, [seconds, stop])
+
+  return [seconds, start, stop, pending]
+}
+
+export default function Timer() {
+  const [timer, start, stop, pending] = useStopwatch(25);
 
   useEffect(() => {
-    document.title = `${getMinutes(seconds)}:${getSeconds(seconds)}`
-  }, [seconds])
+    return stop();
+  }, [stop])
 
+  useEffect(() => {
+    document.title = `${getMinutes(timer)}:${getSeconds(timer)}`
+  }, [timer])
+
+  const button = pending
+    ? <button onClick={stop} className="timer__button"><VscDebugStop /></button>
+    : <button onClick={start} className="timer__button"><VscDebugStart /></button>
 
   return (
     <div className="timer">
-      <h1 className="timer__counter">{getMinutes(seconds)}:{getSeconds(seconds)}</h1>
-      <button onClick={handleStartTimer} className="timer__button"><VscDebugStart /></button>
+      <h1 className="timer__counter">{getMinutes(timer)}:{getSeconds(timer)}</h1>
+      {button}
+
     </div>
   )
 }
