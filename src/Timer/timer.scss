@@ -1,26 +1,39 @@
 .timer {
-  font-size: 1.5rem;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-height: 100%;
 
   &__counter {
     font-weight: bold;
   }
 
-  &__button {
-    background-color: #fff;
-    border: none;
-    height: 45px;
-    width: 45px;
-    border-radius: 100px;
-    &:hover {
-      background-color: #eee;
-    }
-    &:active {
-      background-color: #ddd;
-    }
+  &__header {
+    width: 100%;
+    padding: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  &__done {
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  &__main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: row;
+    padding: 32px;
   }
 }

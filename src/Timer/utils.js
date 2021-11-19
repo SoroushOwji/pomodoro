@@ -13,12 +13,29 @@ export function getMinutes(sec) {
   return Math.floor(sec/60)
 }
 
+export function not(fn) {
+  return function (...args) {
+    return !fn(...args)
+  }
+}
+
+export function isEven(number) {
+  return number % 2;
+}
+
+export function isOdd(number) {
+  return not(isEven(number));
+}
+
 export function useStopwatch(min) {
   const [seconds, setSeconds] = useState(60 * min);
   const [pending, setPending] = useState(false);
   let reference = useRef(null);
 
-
+  const set = useCallback(function (min) {
+    setSeconds(min * 60);
+  }, [])
+  
   const stop = useCallback(function () {
     clearInterval(reference.current)
     setPending(false);
@@ -32,13 +49,13 @@ export function useStopwatch(min) {
       } else {
         stop();
       }
-    }, 1000)
+    }, 1)
   }, [seconds, stop])
   
   const reset = useCallback(function () {
    stop();
-   setSeconds(min * 60);
-  }, [min, stop])
+   set(min);
+  }, [min, set, stop])
 
   useEffect(function () {
     if(seconds === 0) {
@@ -46,5 +63,6 @@ export function useStopwatch(min) {
     }
   }, [reset, seconds])
 
-  return [seconds, start, stop, reset, pending]
+  return [seconds, start, stop, reset, pending, set]
 }
+
