@@ -15,8 +15,27 @@ function Home() {
   )
 }
 
+const c = [2,4,5,6,7,3,1,12,3]
+
+function Block({ max, item }) {
+  return <div>
+    <svg viewBox={`0 0 4 ${max}`} width="100%">
+      <line x1={2} x2={2} y1={max} y2={max - item} stroke="maroon"/>
+    </svg>
+    <div style={{ textAlign: 'center', marginTop: 10 }}>
+      {item}
+    </div>
+  </div>
+}
+
+
 function Stats() {
-  return <div>stats here</div>
+  const max = Math.max(...c) + 1;
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+      {c.map(item => <Block max={max} item={item} />)}
+    </div>
+  )
 }
 
 function Setting() {
